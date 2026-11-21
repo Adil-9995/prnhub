@@ -30,9 +30,9 @@ export function LandingPage() {
             </div>
             <div className="landing-note"><Check size={14} /> No downloads. No complicated setup.</div>
           </div>
-          <div className="hero-visual" aria-label="PrnHub meeting interface illustration">
+          <div className="hero-visual" aria-label="FOSSHub meeting interface illustration">
             <div className="hero-window">
-              <div className="hero-window-top"><span>PrnHub classroom</span><span>Live room</span></div>
+              <div className="hero-window-top"><span>FOSSHub classroom</span><span>Live room</span></div>
               <div className="hero-people">
                 <div className="hero-person">Class</div><div className="hero-person">Talk</div>
                 <div className="hero-person">Share</div><div className="hero-person">Learn</div>

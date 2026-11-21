@@ -96,7 +96,7 @@ export function AuthPage({ mode }: { mode: 'signin' | 'signup' }) {
       <form className="form-card auth-card" onSubmit={submit}>
         <span className="eyebrow">Your meetings, in one place</span>
         <h1>{isRecovery ? 'Choose a new password' : isSignup ? 'Create your account' : 'Welcome back'}</h1>
-        <p>{isRecovery ? 'Choose a new password for your PrnHub account.' : isSignup ? 'Get your workspace ready for the next great conversation.' : 'Sign in to pick up where you left off.'}</p>
+        <p>{isRecovery ? 'Choose a new password for your FOSSHub account.' : isSignup ? 'Get your workspace ready for the next great conversation.' : 'Sign in to pick up where you left off.'}</p>
         {isSignup && <div className="field"><label htmlFor="auth-name">Your name</label><input id="auth-name" value={name} onChange={(event) => setName(event.target.value)} autoComplete="name" required maxLength={60} /></div>}
         {!isRecovery && <div className="field"><label htmlFor="auth-email">Email address</label><input id="auth-email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" required /></div>}
         <div className="field"><label htmlFor="auth-password">{isRecovery ? 'New password' : 'Password'}</label><input id="auth-password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete={isSignup || isRecovery ? 'new-password' : 'current-password'} required minLength={8} /></div>

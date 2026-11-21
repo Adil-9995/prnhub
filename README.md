@@ -1,6 +1,6 @@
-# PrnHub
+# FOSSHub
 
-PrnHub is a responsive learning and video-meeting application built with React, TypeScript, Vite, Tailwind CSS, React Router, Lucide, Supabase, and LiveKit. Supabase provides authentication, meeting data, access policies, chat, and participant records. LiveKit provides real-time audio, video, and screen sharing.
+FOSSHub is a responsive learning and video-meeting application built with React, TypeScript, Vite, Tailwind CSS, React Router, Lucide, Supabase, and LiveKit. Supabase provides authentication, meeting data, access policies, chat, and participant records. LiveKit provides real-time audio, video, and screen sharing.
 
 The source is deployment-ready but requires project credentials and external services before protected pages and real meetings can work. No real 300-person load test or two-client production meeting has been performed.
 
@@ -33,7 +33,7 @@ Set these browser-safe variables in `.env.local`:
 
 | Variable | Required | Description |
 | --- | --- | --- |
-| `VITE_APP_NAME` | No | Display brand; defaults to `PrnHub`. |
+| `VITE_APP_NAME` | No | Display brand; defaults to `FOSSHub`. |
 | `VITE_SUPABASE_URL` | Yes | Supabase project URL. |
 | `VITE_SUPABASE_ANON_KEY` | Yes | Supabase anon/publishable key. This key is public by design; database security must be enforced by RLS. |
 

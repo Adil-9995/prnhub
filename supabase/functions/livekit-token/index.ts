@@ -103,7 +103,7 @@ Deno.serve(async (request) => {
     rooms = await roomService.listRooms([meeting.code])
   }
   if (!rooms[0] || rooms[0].maxParticipants !== 300) {
-    return respond({ error: 'This LiveKit room is not configured for the PrnHub 300-participant limit.' }, 503)
+    return respond({ error: 'This LiveKit room is not configured for the FOSSHub 300-participant limit.' }, 503)
   }
 
   const token = new AccessToken(liveKitApiKey, liveKitApiSecret, {

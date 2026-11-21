@@ -23,7 +23,7 @@ export default function App() {
       <AuthProvider>
         <StoreProvider>
           <Toast />
-          <Suspense fallback={<div className="loading-screen" role="status"><span className="loading-spinner" />Loading PrnHub…</div>}>
+          <Suspense fallback={<div className="loading-screen" role="status"><span className="loading-spinner" />Loading FOSSHub…</div>}>
             <Routes>
               <Route path="/" element={<LandingPage />} />
               <Route path="/signin" element={<SignInPage />} />

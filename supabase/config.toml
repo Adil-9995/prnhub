@@ -1,4 +1,4 @@
-project_id = "prnhub"
+project_id = "fosshub"
 
 [functions.livekit-webhook]
 verify_jwt = false

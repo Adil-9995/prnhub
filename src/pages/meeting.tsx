@@ -28,7 +28,7 @@ import type { MeetingPreviewRow, ParticipantRow, ParticipantStateRow } from '../
 const PARTICIPANT_PAGE_SIZE = 50
 const VISIBLE_VIDEO_COUNT = 8
 const ACTIVE_AUDIO_COUNT = 4
-const JOIN_STATE_PREFIX = 'prnhub-join:'
+const JOIN_STATE_PREFIX = 'fosshub-join:'
 
 function useLocalPreview() {
   const [stream, setStream] = useState<MediaStream | null>(null)
@@ -45,8 +45,8 @@ function useLocalPreview() {
       return
     }
     try {
-      const cameraId = localStorage.getItem('prnhub-camera')
-      const microphoneId = localStorage.getItem('prnhub-microphone')
+      const cameraId = localStorage.getItem('fosshub-camera')
+      const microphoneId = localStorage.getItem('fosshub-microphone')
       const next = await navigator.mediaDevices.getUserMedia({
         video: only === 'microphone' ? false : cameraId ? { deviceId: { exact: cameraId } } : true,
         audio: only === 'camera' ? false : microphoneId ? { deviceId: { exact: microphoneId } } : true,
@@ -85,7 +85,7 @@ function useLocalPreview() {
     else setMicOn(enabled)
   }
   const selectDevice = async (kind: 'videoinput' | 'audioinput', deviceId: string) => {
-    localStorage.setItem(kind === 'videoinput' ? 'prnhub-camera' : 'prnhub-microphone', deviceId)
+    localStorage.setItem(kind === 'videoinput' ? 'fosshub-camera' : 'fosshub-microphone', deviceId)
     if (!stream || (!cameraOn && !micOn)) return
     try {
       const next = await navigator.mediaDevices.getUserMedia({
@@ -124,7 +124,7 @@ export function LobbyPage() {
   const preview = useLocalPreview()
   const [meeting, setMeeting] = useState<MeetingPreviewRow | null>(null)
   const [loading, setLoading] = useState(true)
-  const [name, setName] = useState(() => sessionStorage.getItem('prnhub-display-name') || user?.user_metadata?.display_name || user?.email?.split('@')[0] || '')
+  const [name, setName] = useState(() => sessionStorage.getItem('fosshub-display-name') || user?.user_metadata?.display_name || user?.email?.split('@')[0] || '')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
@@ -183,7 +183,7 @@ export function LobbyPage() {
     setError('')
     try {
       await ensureGuestSession()
-      sessionStorage.setItem('prnhub-display-name', name.trim())
+      sessionStorage.setItem('fosshub-display-name', name.trim())
       const joined = await joinMeeting(meetingId, name.trim(), password)
       await updateParticipantState(joined.meeting_id, preview.micOn, preview.cameraOn, false)
       const state = await getParticipantState(meetingId)
@@ -241,7 +241,7 @@ export function LobbyPage() {
           </div>
           {!preview.stream && <button className="btn btn-secondary section-spacer" onClick={() => void preview.start()}>Enable camera preview</button>}
           {preview.error && <div className="error-banner" role="alert"><AlertCircle size={16} />{preview.error}</div>}
-          {preview.devices.some((device) => device.kind === 'videoinput') && <div className="field section-spacer"><label htmlFor="lobby-camera">Camera</label><select id="lobby-camera" defaultValue={localStorage.getItem('prnhub-camera') || ''} onChange={(event) => void preview.selectDevice('videoinput', event.target.value)}><option value="">Default camera</option>{preview.devices.filter((device) => device.kind === 'videoinput').map((device, index) => <option key={device.deviceId} value={device.deviceId}>{device.label || `Camera ${index + 1}`}</option>)}</select></div>}
+          {preview.devices.some((device) => device.kind === 'videoinput') && <div className="field section-spacer"><label htmlFor="lobby-camera">Camera</label><select id="lobby-camera" defaultValue={localStorage.getItem('fosshub-camera') || ''} onChange={(event) => void preview.selectDevice('videoinput', event.target.value)}><option value="">Default camera</option>{preview.devices.filter((device) => device.kind === 'videoinput').map((device, index) => <option key={device.deviceId} value={device.deviceId}>{device.label || `Camera ${index + 1}`}</option>)}</select></div>}
         </section>
         <section className="form-card">
           <span className="eyebrow">Meeting details</span>
@@ -249,7 +249,7 @@ export function LobbyPage() {
           <p>Room code <strong>{meetingId}</strong> · {meeting?.waiting_room ? 'Waiting room enabled' : 'Open room'}</p>
           <div className="field"><label htmlFor="lobby-name">Your name</label><input id="lobby-name" value={name} onChange={(event) => setName(event.target.value)} maxLength={80} autoComplete="name" required /></div>
           {meeting?.password_required && <div className="field"><label htmlFor="lobby-password">Meeting password</label><input id="lobby-password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" /></div>}
-          {preview.devices.some((device) => device.kind === 'audioinput') && <div className="field"><label htmlFor="lobby-microphone">Microphone</label><select id="lobby-microphone" defaultValue={localStorage.getItem('prnhub-microphone') || ''} onChange={(event) => void preview.selectDevice('audioinput', event.target.value)}><option value="">Default microphone</option>{preview.devices.filter((device) => device.kind === 'audioinput').map((device, index) => <option key={device.deviceId} value={device.deviceId}>{device.label || `Microphone ${index + 1}`}</option>)}</select></div>}
+          {preview.devices.some((device) => device.kind === 'audioinput') && <div className="field"><label htmlFor="lobby-microphone">Microphone</label><select id="lobby-microphone" defaultValue={localStorage.getItem('fosshub-microphone') || ''} onChange={(event) => void preview.selectDevice('audioinput', event.target.value)}><option value="">Default microphone</option>{preview.devices.filter((device) => device.kind === 'audioinput').map((device, index) => <option key={device.deviceId} value={device.deviceId}>{device.label || `Microphone ${index + 1}`}</option>)}</select></div>}
           {error && <div className="field-error" role="alert">{error}</div>}
           <div className="field-hint">Camera and microphone are sent only after you join the live room.</div>
           <button className="btn btn-primary" style={{ width: '100%', marginTop: 12 }} onClick={() => void join()} disabled={loading || busy || !meeting}>{busy ? 'Joining…' : 'Join meeting'} <Video size={15} /></button>
@@ -315,7 +315,7 @@ export function MeetingRoomPage() {
   const chatEnd = useRef<HTMLDivElement>(null)
   const [reactionMenu, setReactionMenu] = useState(false)
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([])
-  const [quality, setQuality] = useState(() => localStorage.getItem('prnhub-video-quality') || 'Auto')
+  const [quality, setQuality] = useState(() => localStorage.getItem('fosshub-video-quality') || 'Auto')
 
   const refreshParticipants = useCallback(async (offset = 0, append = false) => {
     if (!membership) return
@@ -397,7 +397,7 @@ export function MeetingRoomPage() {
         }
         setConnected(true)
         setRemoteParticipants(Array.from(room.remoteParticipants.values()))
-        const outputId = localStorage.getItem('prnhub-audio-output')
+        const outputId = localStorage.getItem('fosshub-audio-output')
         if (active && outputId) {
           try {
             const switched = await room.switchActiveDevice('audiooutput', outputId)
@@ -408,13 +408,13 @@ export function MeetingRoomPage() {
         }
         if (!active) { await room.disconnect(); return }
         if (state.mic_enabled) {
-          const deviceId = localStorage.getItem('prnhub-microphone')
+          const deviceId = localStorage.getItem('fosshub-microphone')
           await room.localParticipant.setMicrophoneEnabled(true, deviceId ? { deviceId } : {})
           if (!active) { await room.disconnect(); return }
         }
         if (state.camera_enabled) {
-          const deviceId = localStorage.getItem('prnhub-camera')
-          const preferredQuality = localStorage.getItem('prnhub-video-quality') || 'Auto'
+          const deviceId = localStorage.getItem('fosshub-camera')
+          const preferredQuality = localStorage.getItem('fosshub-video-quality') || 'Auto'
           const preset = preferredQuality === '720p' ? VideoPresets.h720 : preferredQuality === '540p' ? VideoPresets.h540 : preferredQuality === '360p' ? VideoPresets.h360 : undefined
           await room.localParticipant.setCameraEnabled(
             true,
@@ -532,7 +532,7 @@ export function MeetingRoomPage() {
     const room = roomRef.current
     if (!room) return
     try {
-      const deviceId = localStorage.getItem('prnhub-microphone')
+      const deviceId = localStorage.getItem('fosshub-microphone')
       await room.localParticipant.setMicrophoneEnabled(muted, deviceId ? { deviceId } : {})
       const nextMuted = !muted
       setMuted(nextMuted)
@@ -546,7 +546,7 @@ export function MeetingRoomPage() {
     if (!room) return
     try {
       const preset = quality === '720p' ? VideoPresets.h720 : quality === '540p' ? VideoPresets.h540 : quality === '360p' ? VideoPresets.h360 : undefined
-      const deviceId = localStorage.getItem('prnhub-camera')
+      const deviceId = localStorage.getItem('fosshub-camera')
       await room.localParticipant.setCameraEnabled(
         cameraOff,
         { ...(deviceId ? { deviceId } : {}), ...(preset ? { resolution: preset.resolution } : {}) },
@@ -633,9 +633,9 @@ export function MeetingRoomPage() {
     }
   }
   const switchMeetingDevice = async (kind: MediaDeviceKind, deviceId: string) => {
-    if (kind === 'videoinput') localStorage.setItem('prnhub-camera', deviceId)
-    if (kind === 'audioinput') localStorage.setItem('prnhub-microphone', deviceId)
-    if (kind === 'audiooutput') localStorage.setItem('prnhub-audio-output', deviceId)
+    if (kind === 'videoinput') localStorage.setItem('fosshub-camera', deviceId)
+    if (kind === 'audioinput') localStorage.setItem('fosshub-microphone', deviceId)
+    if (kind === 'audiooutput') localStorage.setItem('fosshub-audio-output', deviceId)
     if ((kind === 'videoinput' && cameraOff) || (kind === 'audioinput' && muted)) {
       notify('Device preference saved for when you turn it on.')
       return
@@ -662,7 +662,7 @@ export function MeetingRoomPage() {
     <>
       <section className="meeting-stage" aria-label="Live meeting room">
         <header className="stage-top">
-          <div className="stage-title"><span className="brand-mark"><Video size={17} /></span><div><strong>{membership?.title || 'PrnHub meeting'}</strong><span>{meetingId} · {clock}</span></div></div>
+          <div className="stage-title"><span className="brand-mark"><Video size={17} /></span><div><strong>{membership?.title || 'FOSSHub meeting'}</strong><span>{meetingId} · {clock}</span></div></div>
           <span className="connection-pill"><i className={`status-dot ${connected ? '' : 'off'}`} /> {connected ? 'Connected' : 'Reconnecting'}</span>
           <button className="icon-button" aria-label="Copy invitation" onClick={() => void copyInvite()}><Copy size={15} /></button>
         </header>
@@ -711,10 +711,10 @@ export function MeetingRoomPage() {
               </div>
               <form className="chat-compose" onSubmit={(event) => void sendMessage(event)}><input aria-label="Write a message" value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Send a message..." maxLength={2000} /><button className="tool-btn" aria-label="Send message" type="submit"><Send size={14} /></button></form>
             </> : <div className="meeting-settings">
-              <div className="field"><label htmlFor="meeting-microphone">Microphone</label><select id="meeting-microphone" defaultValue={localStorage.getItem('prnhub-microphone') || ''} onChange={(event) => void switchMeetingDevice('audioinput', event.target.value)}><option value="">System default</option>{devices.filter((device) => device.kind === 'audioinput').map((device, index) => <option key={device.deviceId} value={device.deviceId}>{device.label || `Microphone ${index + 1}`}</option>)}</select></div>
-              <div className="field"><label htmlFor="meeting-camera">Camera</label><select id="meeting-camera" defaultValue={localStorage.getItem('prnhub-camera') || ''} onChange={(event) => void switchMeetingDevice('videoinput', event.target.value)}><option value="">System default</option>{devices.filter((device) => device.kind === 'videoinput').map((device, index) => <option key={device.deviceId} value={device.deviceId}>{device.label || `Camera ${index + 1}`}</option>)}</select></div>
-              <div className="field"><label htmlFor="meeting-audio-output">Audio output</label><select id="meeting-audio-output" defaultValue={localStorage.getItem('prnhub-audio-output') || ''} onChange={(event) => void switchMeetingDevice('audiooutput', event.target.value)}><option value="">System default</option>{devices.filter((device) => device.kind === 'audiooutput').map((device, index) => <option key={device.deviceId} value={device.deviceId}>{device.label || `Speaker ${index + 1}`}</option>)}</select></div>
-              <div className="field"><label htmlFor="meeting-quality">Camera resolution</label><select id="meeting-quality" value={quality} onChange={(event) => { setQuality(event.target.value); localStorage.setItem('prnhub-video-quality', event.target.value) }}><option>Auto</option><option>720p</option><option>540p</option><option>360p</option></select></div>
+              <div className="field"><label htmlFor="meeting-microphone">Microphone</label><select id="meeting-microphone" defaultValue={localStorage.getItem('fosshub-microphone') || ''} onChange={(event) => void switchMeetingDevice('audioinput', event.target.value)}><option value="">System default</option>{devices.filter((device) => device.kind === 'audioinput').map((device, index) => <option key={device.deviceId} value={device.deviceId}>{device.label || `Microphone ${index + 1}`}</option>)}</select></div>
+              <div className="field"><label htmlFor="meeting-camera">Camera</label><select id="meeting-camera" defaultValue={localStorage.getItem('fosshub-camera') || ''} onChange={(event) => void switchMeetingDevice('videoinput', event.target.value)}><option value="">System default</option>{devices.filter((device) => device.kind === 'videoinput').map((device, index) => <option key={device.deviceId} value={device.deviceId}>{device.label || `Camera ${index + 1}`}</option>)}</select></div>
+              <div className="field"><label htmlFor="meeting-audio-output">Audio output</label><select id="meeting-audio-output" defaultValue={localStorage.getItem('fosshub-audio-output') || ''} onChange={(event) => void switchMeetingDevice('audiooutput', event.target.value)}><option value="">System default</option>{devices.filter((device) => device.kind === 'audiooutput').map((device, index) => <option key={device.deviceId} value={device.deviceId}>{device.label || `Speaker ${index + 1}`}</option>)}</select></div>
+              <div className="field"><label htmlFor="meeting-quality">Camera resolution</label><select id="meeting-quality" value={quality} onChange={(event) => { setQuality(event.target.value); localStorage.setItem('fosshub-video-quality', event.target.value) }}><option>Auto</option><option>720p</option><option>540p</option><option>360p</option></select></div>
               <button className="btn btn-secondary btn-small" onClick={() => void discoverMeetingDevices()}>Refresh devices</button>
               <p className="field-hint">Camera and microphone changes apply immediately. Background blur is not enabled in this build.</p>
             </div>}

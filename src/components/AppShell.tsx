@@ -61,7 +61,7 @@ export function AppShell() {
         <div className="sidebar-bottom">
           <div className="user-chip">
             <span className="avatar">{initials}</span>
-            <div className="user-meta"><strong>{displayName}</strong><span>{user?.is_anonymous ? 'Guest session' : 'PrnHub account'}</span></div>
+            <div className="user-meta"><strong>{displayName}</strong><span>{user?.is_anonymous ? 'Guest session' : 'FOSSHub account'}</span></div>
             <button className="icon-button" aria-label="Sign out" onClick={() => void logout()}><LogOut size={15} /></button>
           </div>
         </div>

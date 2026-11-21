@@ -165,9 +165,9 @@ export function JoinMeetingPage() {
       if (/^https?:\/\//i.test(meetingCode)) meetingCode = new URL(meetingCode).pathname.split('/').filter(Boolean).pop() || ''
       else meetingCode = meetingCode.replace(/\/+$/, '').split('/').filter(Boolean).pop() || ''
     } catch { meetingCode = '' }
-    if (!/^[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}$/i.test(meetingCode)) { setError('Enter a valid PrnHub meeting code or link.'); return }
+    if (!/^[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}$/i.test(meetingCode)) { setError('Enter a valid FOSSHub meeting code or link.'); return }
     if (!name.trim()) { setError('Enter your display name to continue.'); return }
-    sessionStorage.setItem('prnhub-display-name', name.trim())
+    sessionStorage.setItem('fosshub-display-name', name.trim())
     navigate(`/join/${meetingCode.toLowerCase()}`)
   }
   return (
@@ -260,13 +260,13 @@ export function SchedulePage() {
 export function SettingsPage() {
   const { theme, toggleTheme, notify } = useStore()
   const { user } = useAuth()
-  const [displayName, setDisplayName] = useState(() => localStorage.getItem('prnhub-display-name') || user?.user_metadata?.display_name || user?.email?.split('@')[0] || '')
+  const [displayName, setDisplayName] = useState(() => localStorage.getItem('fosshub-display-name') || user?.user_metadata?.display_name || user?.email?.split('@')[0] || '')
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([])
   const [deviceError, setDeviceError] = useState('')
   const [discovering, setDiscovering] = useState(false)
   const [testingMic, setTestingMic] = useState(false)
   const [micLevel, setMicLevel] = useState(0)
-  const [quality, setQuality] = useState(() => localStorage.getItem('prnhub-video-quality') || 'Auto')
+  const [quality, setQuality] = useState(() => localStorage.getItem('fosshub-video-quality') || 'Auto')
   const testStream = useRef<MediaStream | null>(null)
   const audioContext = useRef<AudioContext | null>(null)
   const animationFrame = useRef(0)
@@ -311,7 +311,7 @@ export function SettingsPage() {
     let stream: MediaStream | null = null
     let context: AudioContext | null = null
     try {
-      const selectedMic = localStorage.getItem('prnhub-microphone')
+      const selectedMic = localStorage.getItem('fosshub-microphone')
       stream = await navigator.mediaDevices.getUserMedia({ audio: selectedMic ? { deviceId: { exact: selectedMic } } : true })
       context = new AudioContext()
       const analyser = context.createAnalyser()
@@ -353,7 +353,7 @@ export function SettingsPage() {
       if (profileError) throw profileError
       const { error: authError } = await client.auth.updateUser({ data: { display_name: trimmed } })
       if (authError) throw authError
-      localStorage.setItem('prnhub-display-name', trimmed)
+      localStorage.setItem('fosshub-display-name', trimmed)
       notify('Display name saved.')
     } catch (reason) {
       notify(reason instanceof Error ? reason.message : 'Could not save your display name.')
@@ -361,7 +361,7 @@ export function SettingsPage() {
   }
   return (
     <>
-      <div className="page-heading"><div><span className="eyebrow">Make it yours</span><h1>Settings</h1><p>Manage your PrnHub profile and device preferences.</p></div></div>
+      <div className="page-heading"><div><span className="eyebrow">Make it yours</span><h1>Settings</h1><p>Manage your FOSSHub profile and device preferences.</p></div></div>
       <section className="form-card" style={{ maxWidth: 700 }}>
         <h2>Personal preferences</h2><p>Preferences are saved in this browser only.</p>
         <div className="field"><label htmlFor="settings-name">Display name</label><div style={{ display: 'flex', gap: 8 }}><input id="settings-name" value={displayName} onChange={(event) => setDisplayName(event.target.value)} maxLength={80} /><button className="btn btn-secondary" onClick={() => void saveDisplayName()}>Save</button></div></div>
@@ -371,13 +371,13 @@ export function SettingsPage() {
         <button className="btn btn-secondary btn-small" onClick={() => void discoverDevices()} disabled={discovering}>{discovering ? 'Checking devices…' : 'Allow and discover devices'}</button>
         {deviceError && <div className="error-banner" role="alert">{deviceError}</div>}
         {devices.length > 0 && <>
-          <div className="field section-spacer"><label htmlFor="settings-mic">Microphone</label><select id="settings-mic" defaultValue={localStorage.getItem('prnhub-microphone') || ''} onChange={(event) => saveDevice('prnhub-microphone', event.target.value)}><option value="">Default microphone</option>{microphones.map((device, index) => <option key={device.deviceId} value={device.deviceId}>{device.label || `Microphone ${index + 1}`}</option>)}</select></div>
-          <div className="field"><label htmlFor="settings-camera">Camera</label><select id="settings-camera" defaultValue={localStorage.getItem('prnhub-camera') || ''} onChange={(event) => saveDevice('prnhub-camera', event.target.value)}><option value="">Default camera</option>{cameras.map((device, index) => <option key={device.deviceId} value={device.deviceId}>{device.label || `Camera ${index + 1}`}</option>)}</select></div>
-          <div className="field"><label htmlFor="settings-output">Audio output</label><select id="settings-output" defaultValue={localStorage.getItem('prnhub-audio-output') || ''} onChange={(event) => saveDevice('prnhub-audio-output', event.target.value)}><option value="">Default output</option>{outputs.map((device, index) => <option key={device.deviceId} value={device.deviceId}>{device.label || `Speaker ${index + 1}`}</option>)}</select></div>
+          <div className="field section-spacer"><label htmlFor="settings-mic">Microphone</label><select id="settings-mic" defaultValue={localStorage.getItem('fosshub-microphone') || ''} onChange={(event) => saveDevice('fosshub-microphone', event.target.value)}><option value="">Default microphone</option>{microphones.map((device, index) => <option key={device.deviceId} value={device.deviceId}>{device.label || `Microphone ${index + 1}`}</option>)}</select></div>
+          <div className="field"><label htmlFor="settings-camera">Camera</label><select id="settings-camera" defaultValue={localStorage.getItem('fosshub-camera') || ''} onChange={(event) => saveDevice('fosshub-camera', event.target.value)}><option value="">Default camera</option>{cameras.map((device, index) => <option key={device.deviceId} value={device.deviceId}>{device.label || `Camera ${index + 1}`}</option>)}</select></div>
+          <div className="field"><label htmlFor="settings-output">Audio output</label><select id="settings-output" defaultValue={localStorage.getItem('fosshub-audio-output') || ''} onChange={(event) => saveDevice('fosshub-audio-output', event.target.value)}><option value="">Default output</option>{outputs.map((device, index) => <option key={device.deviceId} value={device.deviceId}>{device.label || `Speaker ${index + 1}`}</option>)}</select></div>
         </>}
         <div className="toggle-row"><div className="toggle-copy"><strong>Microphone test</strong><span>{testingMic ? `Listening — input level ${micLevel}%` : 'Check that your microphone is picking up sound.'}</span></div><button className="btn btn-secondary btn-small" onClick={() => void toggleMicTest()}>{testingMic ? 'Stop test' : 'Test microphone'}</button></div>
         <div style={{ height: 5, margin: '0 0 18px', overflow: 'hidden', borderRadius: 5, background: 'var(--line)' }}><div style={{ width: `${micLevel}%`, height: '100%', background: 'var(--mint)', transition: 'width .1s' }} /></div>
-        <div className="field"><label htmlFor="video-quality">Video quality preference</label><select id="video-quality" value={quality} onChange={(event) => { setQuality(event.target.value); localStorage.setItem('prnhub-video-quality', event.target.value) }}><option>Auto</option><option>720p</option><option>540p</option><option>360p</option></select></div>
+        <div className="field"><label htmlFor="video-quality">Video quality preference</label><select id="video-quality" value={quality} onChange={(event) => { setQuality(event.target.value); localStorage.setItem('fosshub-video-quality', event.target.value) }}><option>Auto</option><option>720p</option><option>540p</option><option>360p</option></select></div>
         <div className="field-hint">LiveKit applies this capture resolution when you enable your camera. Background blur is not enabled in this build.</div>
         <div className="section-spacer" />
         <h2>Keyboard shortcuts</h2>

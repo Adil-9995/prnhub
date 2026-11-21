@@ -79,8 +79,8 @@ begin
 end;
 $$;
 
-drop trigger if exists on_auth_user_created_prnhub on auth.users;
-create trigger on_auth_user_created_prnhub
+drop trigger if exists on_auth_user_created_fosshub on auth.users;
+create trigger on_auth_user_created_fosshub
   after insert on auth.users
   for each row execute function public.create_profile_for_new_user();
 

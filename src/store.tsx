@@ -12,7 +12,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [meetingsLoading, setMeetingsLoading] = useState(false)
   const [dataError, setDataError] = useState('')
   const [theme, setTheme] = useState<'light' | 'dark'>(() =>
-    localStorage.getItem('prnhub-theme') === 'dark' ? 'dark' : 'light',
+    localStorage.getItem('fosshub-theme') === 'dark' ? 'dark' : 'light',
   )
   const [notice, setNotice] = useState('')
 
@@ -37,7 +37,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, [authLoading, configured, user?.id])
 
   useEffect(() => {
-    localStorage.setItem('prnhub-theme', theme)
+    localStorage.setItem('fosshub-theme', theme)
     document.documentElement.classList.toggle('dark-theme', theme === 'dark')
   }, [theme])
 
