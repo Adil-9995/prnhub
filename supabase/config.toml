@@ -1,0 +1,4 @@
+project_id = "prnhub"
+
+[functions.livekit-webhook]
+verify_jwt = false
